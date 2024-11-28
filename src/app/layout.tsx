@@ -1,5 +1,6 @@
 import { Toaster } from 'react-hot-toast';
-import SupabaseProvider from '@/lib/auth/supabase-provider';
+import SupabaseProvider from './supabase-provider';
+import { AuthProvider } from '@/lib/auth/contexts/AuthContext';
 import '@/styles/globals.css';
 
 export const metadata = {
@@ -13,12 +14,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" className="h-full bg-white">
+      <body className="h-full">
         <SupabaseProvider>
-          {children}
-          <Toaster />
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </SupabaseProvider>
+        <Toaster />
       </body>
     </html>
   );

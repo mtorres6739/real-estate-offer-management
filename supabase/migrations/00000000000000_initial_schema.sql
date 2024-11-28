@@ -1,3 +1,6 @@
+-- Drop existing policies
+drop policy if exists "Anyone can view available properties" on properties;
+
 -- Enable required extensions
 create extension if not exists "uuid-ossp";
 
