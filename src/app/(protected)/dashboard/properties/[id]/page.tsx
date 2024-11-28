@@ -10,32 +10,45 @@ export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 
 interface Props {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-async function getProperty(id: string) {
-  const cookieStore = cookies();
+async function getProperty(cookieStore: ReturnType<typeof cookies>, id: string) {
   const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
   
-  const { data, error } = await supabase
-    .from('properties')
-    .select('*')
-    .eq('id', id)
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('properties')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-  if (error) {
-    console.error('Error fetching property:', error);
+    if (error) {
+      console.error('Error fetching property:', error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error:', error);
     return null;
   }
-
-  return data;
 }
 
 export default async function PropertyDetailsPage({ params }: Props) {
-  const id = await Promise.resolve(params.id);
-  const propertyData = await getProperty(id);
+  // Await both the params and cookieStore
+  const [resolvedParams, cookieStore] = await Promise.all([
+    params,
+    cookies()
+  ]);
+
+  if (!resolvedParams?.id) {
+    notFound();
+  }
+
+  const propertyData = await getProperty(cookieStore, resolvedParams.id);
 
   if (!propertyData) {
     notFound();

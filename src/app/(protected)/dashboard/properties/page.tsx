@@ -86,27 +86,56 @@ export default function PropertiesPage() {
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         Status
                       </th>
+                      <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                        <span className="sr-only">Actions</span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {properties.map((property) => (
-                      <tr 
-                        key={property.id}
-                        onClick={() => handleRowClick(property.id)}
-                        className="cursor-pointer hover:bg-gray-50"
-                      >
-                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                      <tr key={property.id} className="hover:bg-gray-50">
+                        <td 
+                          onClick={() => handleRowClick(property.id)}
+                          className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 cursor-pointer"
+                        >
                           {property.address}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{property.city}</td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{property.state}</td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <td 
+                          onClick={() => handleRowClick(property.id)}
+                          className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 cursor-pointer"
+                        >
+                          {property.city}
+                        </td>
+                        <td 
+                          onClick={() => handleRowClick(property.id)}
+                          className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 cursor-pointer"
+                        >
+                          {property.state}
+                        </td>
+                        <td 
+                          onClick={() => handleRowClick(property.id)}
+                          className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 cursor-pointer"
+                        >
                           {formatCurrency(property.price)}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <td 
+                          onClick={() => handleRowClick(property.id)}
+                          className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 cursor-pointer"
+                        >
                           <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
                             {property.status}
                           </span>
+                        </td>
+                        <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                          <a
+                            href={`/properties/${property.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-indigo-600 hover:text-indigo-900"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            View Public Page
+                          </a>
                         </td>
                       </tr>
                     ))}

@@ -86,11 +86,19 @@ export default function PropertyDetails({ property: initialProperty }: PropertyD
             </p>
           </div>
           <div className="space-x-3">
+            <a
+              href={`/properties/${property.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mr-4 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              View Public Page
+            </a>
             <button
               onClick={() => setIsEditModalOpen(true)}
-              className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Edit
+              Edit Property
             </button>
             <button
               onClick={handleDelete}

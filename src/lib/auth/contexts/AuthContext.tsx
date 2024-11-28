@@ -20,6 +20,11 @@ export interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper function to check if a path is a public property page
+const isPublicPropertyPage = (path: string) => {
+  return /^\/properties\/[^/]+$/.test(path);
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -35,6 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
           setUser(session.user);
+          // Only redirect to dashboard if on auth pages
           if (pathname === '/login' || pathname === '/register') {
             router.push('/dashboard');
           }
@@ -61,7 +67,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (session?.user) {
             setUser(session.user);
             setError(null);
-            router.replace('/dashboard');
+            // Don't redirect if on a public property page
+            if (!isPublicPropertyPage(pathname)) {
+              router.replace('/dashboard');
+            }
           }
         } else if (event === 'USER_UPDATED') {
           if (session?.user) {
