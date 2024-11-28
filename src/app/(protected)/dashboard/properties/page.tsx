@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import AddPropertyModal from '@/components/properties/AddPropertyModal'
 import { CreatePropertyData, Property, useProperties } from '@/lib/api/properties'
 import { formatCurrency } from '@/lib/utils/format'
@@ -9,6 +10,7 @@ export default function PropertiesPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [properties, setProperties] = useState<Property[]>([])
   const { createProperty, getProperties } = useProperties()
+  const router = useRouter()
 
   useEffect(() => {
     loadProperties()
@@ -32,6 +34,10 @@ export default function PropertiesPage() {
       console.error('Error in handleAddProperty:', error)
       throw error // Let the modal handle the error display
     }
+  }
+
+  const handleRowClick = (propertyId: string) => {
+    router.push(`/dashboard/properties/${propertyId}`)
   }
 
   return (
@@ -84,7 +90,11 @@ export default function PropertiesPage() {
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {properties.map((property) => (
-                      <tr key={property.id}>
+                      <tr 
+                        key={property.id}
+                        onClick={() => handleRowClick(property.id)}
+                        className="cursor-pointer hover:bg-gray-50"
+                      >
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                           {property.address}
                         </td>

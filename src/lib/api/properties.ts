@@ -102,37 +102,26 @@ export function useProperties() {
       .single()
 
     if (error) {
+      console.error('Error fetching property:', error)
       throw error
     }
 
     return property
   }
 
-  const updateProperty = async (id: string, data: Partial<CreatePropertyData>): Promise<Property> => {
-    const updateData: any = {}
-
-    // Only include fields that are present in the data object
-    if (data.address) updateData.address = data.address
-    if (data.city) updateData.city = data.city
-    if (data.state) updateData.state = data.state
-    if (data.zipCode) updateData.zip_code = data.zipCode
-    if (data.price) updateData.price = parseFloat(data.price)
-    if (data.bedrooms) updateData.bedrooms = parseInt(data.bedrooms)
-    if (data.bathrooms) updateData.bathrooms = parseFloat(data.bathrooms)
-    if (data.squareFeet) updateData.square_feet = parseInt(data.squareFeet)
-    if (data.yearBuilt) updateData.year_built = parseInt(data.yearBuilt)
-    if (data.propertyType) updateData.property_type = data.propertyType
-    if (data.description) updateData.description = data.description
-    if (data.notes) updateData.notes = data.notes
-
+  const updateProperty = async (id: string, data: Partial<Property>): Promise<Property> => {
     const { data: property, error } = await supabase
       .from('properties')
-      .update(updateData)
+      .update({
+        ...data,
+        updated_at: new Date().toISOString(),
+      })
       .eq('id', id)
       .select()
       .single()
 
     if (error) {
+      console.error('Error updating property:', error)
       throw error
     }
 
@@ -140,9 +129,13 @@ export function useProperties() {
   }
 
   const deleteProperty = async (id: string): Promise<void> => {
-    const { error } = await supabase.from('properties').delete().eq('id', id)
+    const { error } = await supabase
+      .from('properties')
+      .delete()
+      .eq('id', id)
 
     if (error) {
+      console.error('Error deleting property:', error)
       throw error
     }
   }
