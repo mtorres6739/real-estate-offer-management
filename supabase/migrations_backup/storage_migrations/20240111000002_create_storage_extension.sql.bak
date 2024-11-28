@@ -1,0 +1,87 @@
+-- Enable the storage extension if it's not already enabled
+create extension if not exists "storage" schema "extensions";
+
+-- Create the storage schema if it doesn't exist
+create schema if not exists "storage";
+
+-- Create the storage.buckets table if it doesn't exist
+create table if not exists "storage"."buckets" (
+  "id" text not null,
+  "name" text not null,
+  "owner" uuid,
+  "created_at" timestamptz default now(),
+  "updated_at" timestamptz default now(),
+  "public" boolean default false,
+  "avif_autodetection" boolean default false,
+  "file_size_limit" bigint,
+  "allowed_mime_types" text[],
+  primary key ("id")
+);
+
+-- Create the storage.objects table if it doesn't exist
+create table if not exists "storage"."objects" (
+  "id" uuid not null default uuid_generate_v4(),
+  "bucket_id" text,
+  "name" text,
+  "owner" uuid,
+  "created_at" timestamptz default now(),
+  "updated_at" timestamptz default now(),
+  "last_accessed_at" timestamptz default now(),
+  "metadata" jsonb,
+  "path_tokens" text[] generated always as (string_to_array(name, '/')) stored,
+  primary key ("id"),
+  foreign key ("bucket_id") references "storage"."buckets" ("id")
+);
+
+-- Insert or update the profile-pictures bucket
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'profile-pictures',
+  'profile-pictures',
+  true,
+  5242880, -- 5MB in bytes
+  array['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+)
+on conflict (id) do update set
+  public = true,
+  file_size_limit = 5242880,
+  allowed_mime_types = array['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+-- Set up storage policies
+do $$
+begin
+  -- Drop existing policies if they exist
+  drop policy if exists "Public Access" on storage.objects;
+  drop policy if exists "Authenticated users can upload profile pictures" on storage.objects;
+  drop policy if exists "Users can update their own profile pictures" on storage.objects;
+  drop policy if exists "Users can delete their own profile pictures" on storage.objects;
+
+  -- Create new policies
+  create policy "Public Access"
+    on storage.objects for select
+    using ( bucket_id = 'profile-pictures' );
+
+  create policy "Authenticated users can upload profile pictures"
+    on storage.objects for insert
+    to authenticated
+    with check (
+      bucket_id = 'profile-pictures' AND
+      (storage.foldername(name))[1] = auth.uid()::text
+    );
+
+  create policy "Users can update their own profile pictures"
+    on storage.objects for update
+    to authenticated
+    using (
+      bucket_id = 'profile-pictures' AND
+      (storage.foldername(name))[1] = auth.uid()::text
+    );
+
+  create policy "Users can delete their own profile pictures"
+    on storage.objects for delete
+    to authenticated
+    using (
+      bucket_id = 'profile-pictures' AND
+      (storage.foldername(name))[1] = auth.uid()::text
+    );
+end $$;
