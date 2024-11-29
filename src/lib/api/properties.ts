@@ -33,6 +33,7 @@ export interface CreatePropertyData {
   propertyType?: string
   description?: string
   notes?: string
+  status?: string
 }
 
 export function useProperties() {
@@ -68,6 +69,7 @@ export function useProperties() {
           property_type: data.propertyType || null,
           description: data.description || null,
           notes: data.notes || null,
+          status: data.status || null,
         },
       ])
       .select()
