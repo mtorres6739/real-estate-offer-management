@@ -4,6 +4,7 @@ export interface Offer {
   updated_at: string;
   user_id?: string;
   property_id: string;
+  property_address?: string;
   amount: number;
   status: string;
   name?: string;
