@@ -5,7 +5,17 @@ const nextConfig = {
       allowedOrigins: ['localhost:3000']
     }
   },
-  reactStrictMode: true
+  reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'mivpnikewsmvhmfooivc.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
+  },
 }
 
 module.exports = nextConfig
