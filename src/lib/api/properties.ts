@@ -4,6 +4,7 @@ export interface Property {
   id: string
   created_at: string
   updated_at: string
+  deleted_at: string | null
   user_id: string
   address: string
   city: string
@@ -87,7 +88,22 @@ export function useProperties() {
     const { data: properties, error } = await supabase
       .from('properties')
       .select('*')
+      .is('deleted_at', null)
       .order('created_at', { ascending: false })
+
+    if (error) {
+      throw error
+    }
+
+    return properties
+  }
+
+  const getDeletedProperties = async (): Promise<Property[]> => {
+    const { data: properties, error } = await supabase
+      .from('properties')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false })
 
     if (error) {
       throw error
@@ -130,10 +146,32 @@ export function useProperties() {
     return property
   }
 
+  const restoreProperty = async (id: string): Promise<Property> => {
+    const { data: property, error } = await supabase
+      .from('properties')
+      .update({
+        deleted_at: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error restoring property:', error)
+      throw error
+    }
+
+    return property
+  }
+
   const deleteProperty = async (id: string): Promise<void> => {
     const { error } = await supabase
       .from('properties')
-      .delete()
+      .update({
+        deleted_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
       .eq('id', id)
 
     if (error) {
@@ -148,5 +186,7 @@ export function useProperties() {
     getProperty,
     updateProperty,
     deleteProperty,
+    getDeletedProperties,
+    restoreProperty,
   }
 }

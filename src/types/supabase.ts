@@ -14,25 +14,37 @@ export interface Database {
           id: string
           created_at: string
           user_id: string
-          property_address: string
+          property_id: string
+          property_address: string | null
           offer_amount: number
           status: 'pending' | 'accepted' | 'rejected'
+          deleted_at: string | null
+          properties?: {
+            address: string
+            city: string
+            state: string
+            zip_code: string
+          } | null
         }
         Insert: {
           id?: string
           created_at?: string
           user_id: string
-          property_address: string
+          property_id: string
+          property_address?: string | null
           offer_amount: number
           status?: 'pending' | 'accepted' | 'rejected'
+          deleted_at?: string | null
         }
         Update: {
           id?: string
           created_at?: string
           user_id?: string
-          property_address?: string
+          property_id?: string
+          property_address?: string | null
           offer_amount?: number
           status?: 'pending' | 'accepted' | 'rejected'
+          deleted_at?: string | null
         }
       }
       profiles: {

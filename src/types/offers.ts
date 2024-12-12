@@ -10,6 +10,13 @@ export interface Offer {
   name?: string;
   email?: string;
   phone?: string;
+  deleted_at?: string | null;
+  properties?: {
+    address: string;
+    city: string;
+    state: string;
+    zip_code: string;
+  } | null;
 }
 
 export interface CreateOfferInput {
