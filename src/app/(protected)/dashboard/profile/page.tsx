@@ -86,16 +86,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div>
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <h1 className="text-2xl font-semibold text-gray-900">Profile</h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Manage your personal information and preferences.
-          </p>
-        </div>
-      </div>
-
+    <div className="px-4 sm:px-6 lg:px-8 py-10">
       <div className="mt-8">
         <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow sm:rounded-lg">
           <div className="px-4 py-5 sm:p-6">

@@ -22,10 +22,16 @@ export default function Navbar() {
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 <Link
-                  href="/offers"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/offers')}`}
+                  href="/dashboard/properties"
+                  className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/dashboard/properties')}`}
                 >
-                  Offers
+                  Properties
+                </Link>
+                <Link
+                  href="/dashboard/trash"
+                  className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/dashboard/trash')}`}
+                >
+                  Trash
                 </Link>
                 <Link
                   href="/settings"

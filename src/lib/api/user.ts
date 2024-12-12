@@ -9,7 +9,8 @@ export interface UserProfile {
 export async function updateUserProfile(userId: string, profile: Partial<UserProfile>) {
   const supabase = createClientComponentClient();
   
-  const { data, error } = await supabase
+  // Update profiles table
+  const { data: profileData, error: profileError } = await supabase
     .from('profiles')
     .upsert({
       id: userId,
@@ -19,11 +20,30 @@ export async function updateUserProfile(userId: string, profile: Partial<UserPro
     .select()
     .single();
 
-  if (error) {
-    throw error;
+  if (profileError) {
+    throw profileError;
   }
 
-  return data;
+  // Update auth.users metadata if name is provided
+  if (profile.name) {
+    const { data: userData, error: authError } = await supabase.auth.updateUser({
+      data: {
+        name: profile.name
+      }
+    });
+
+    if (authError) {
+      throw authError;
+    }
+
+    // Refresh the session to get updated metadata
+    const { error: refreshError } = await supabase.auth.refreshSession();
+    if (refreshError) {
+      throw refreshError;
+    }
+  }
+
+  return profileData;
 }
 
 export async function getUserProfile(userId: string) {
